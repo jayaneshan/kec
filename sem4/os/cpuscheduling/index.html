@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Scheduling Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">CPU Scheduling</div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
+                <li><a href="#simulator" class="nav-link" data-section="simulator">Simulator</a></li>
+                <li><a href="#comparison" class="nav-link" data-section="comparison">Compare</a></li>
+                <li><a href="#docs" class="nav-link" data-section="docs">Docs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+
+    <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="section-header">
+                <h1>CPU Scheduling Simulator</h1>
+                <p>Compare and simulate CPU scheduling algorithms interactively</p>
+            </div>
+            
+            <div class="home-content">
+                <div class="info-box">
+                    <h2>Educational Tool</h2>
+                    <p>Understand how different CPU scheduling algorithms work with interactive simulations, visual Gantt charts, and detailed performance metrics.</p>
+                </div>
+
+                <div class="algorithms-grid">
+                    <div class="algo-card">
+                        <h3>FCFS</h3>
+                        <p>First Come First Serve - Simplest algorithm, processes execute in arrival order.</p>
+                    </div>
+
+                    <div class="algo-card">
+                        <h3>SJF</h3>
+                        <p>Shortest Job First - Minimizes waiting time by executing shortest processes first.</p>
+                    </div>
+
+                    <div class="algo-card">
+                        <h3>Priority</h3>
+                        <p>Priority Scheduling - Processes execute based on assigned priority levels.</p>
+                    </div>
+
+                    <div class="algo-card">
+                        <h3>Round Robin</h3>
+                        <p>Preemptive scheduling with fixed time quantum for fair process execution.</p>
+                    </div>
+                </div>
+
+                <div class="cta-buttons">
+                    <a href="#simulator" class="btn btn-primary nav-link" data-section="simulator">Start Simulator</a>
+                    <a href="#comparison" class="btn btn-primary nav-link" data-section="comparison">Compare Algorithms</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simulator Section -->
+        <section id="simulator" class="section">
+            <div class="section-header">
+                <h1>Algorithm Simulator</h1>
+            </div>
+
+            <div class="simulator-container">
+                <!-- Left Panel: Process Input -->
+                <div class="left-panel">
+                    <h2>Process Input</h2>
+                    
+                    <div class="preset-buttons">
+                        <button class="btn btn-small" onclick="loadPreset('preset1')">Sample 1</button>
+                        <button class="btn btn-small" onclick="loadPreset('preset2')">Sample 2</button>
+                        <button class="btn btn-small" onclick="loadPreset('preset3')">Sample 3</button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="process-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Arrival</th>
+                                    <th>Burst</th>
+                                    <th>Priority</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="processTableBody">
+                                <tr>
+                                    <td><input type="text" class="proc-id" value="P1" readonly></td>
+                                    <td><input type="number" class="arrival" value="0" min="0"></td>
+                                    <td><input type="number" class="burst" value="5" min="1"></td>
+                                    <td><input type="number" class="priority" value="1" min="1"></td>
+                                    <td><button class="btn-remove" onclick="removeProcess(this)">X</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="addProcess()">+ Add Process</button>
+                        <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Algorithm Selection & Results -->
+                <div class="right-panel">
+                    <h2>Algorithm Selection</h2>
+                    
+                    <div class="form-group">
+                        <label>Algorithm:</label>
+                        <select id="algorithmSelect" onchange="updateAlgorithmUI()">
+                            <option value="fcfs">FCFS - First Come First Serve</option>
+                            <option value="sjf">SJF - Shortest Job First</option>
+                            <option value="priority">Priority Scheduling</option>
+                            <option value="rr">Round Robin</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="quantumGroup" style="display:none;">
+                        <label>Time Quantum:</label>
+                        <input type="number" id="timeQuantum" value="2" min="1">
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="runSimulation()">Run Simulation</button>
+                        <button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="resultsPanel" style="display:none; margin-top: 25px;">
+                        <h3>Gantt Chart</h3>
+                        <div id="ganttChart" class="gantt-chart"></div>
+
+                        <h3 style="margin-top: 25px;">Process Metrics</h3>
+                        <table class="results-table" id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th>Process</th>
+                                    <th>Arrival</th>
+                                    <th>Burst</th>
+                                    <th>Completion</th>
+                                    <th>TAT</th>
+                                    <th>Waiting</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody"></tbody>
+                        </table>
+
+                        <div class="metrics-box">
+                            <p><strong>Avg Waiting Time:</strong> <span id="avgWT">0</span></p>
+                            <p><strong>Avg Turnaround Time:</strong> <span id="avgTAT">0</span></p>
+                            <p><strong>CPU Utilization:</strong> <span id="cpuUtil">0%</span></p>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="stepSimulation()" id="stepBtn" style="display:none;">Step By Step</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Section -->
+        <section id="comparison" class="section">
+            <div class="section-header">
+                <h1>Algorithm Comparison</h1>
+                <p>Compare performance metrics across all algorithms</p>
+            </div>
+
+            <div class="comparison-container">
+                <button class="btn btn-primary" onclick="runComparison()">Run Comparison on Current Data</button>
+
+                <div id="comparisonResults" style="display:none; margin-top: 30px;">
+                    <h2>Comparison Results</h2>
+                    
+                    <div class="comparison-table-wrapper">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Avg WT</th>
+                                    <th>Avg TAT</th>
+                                    <th>CPU Util</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="comparison-chart">
+                        <h3>Average Waiting Time Comparison</h3>
+                        <div id="wtComparisonChart" class="chart-bars"></div>
+                    </div>
+
+                    <div class="comparison-chart">
+                        <h3>Average Turnaround Time Comparison</h3>
+                        <div id="tatComparisonChart" class="chart-bars"></div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="exportComparison()">Export Comparison</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation Section -->
+        <section id="docs" class="section">
+            <div class="section-header">
+                <h1>Documentation</h1>
+            </div>
+
+            <div class="docs-container">
+                <div class="doc-section">
+                    <h2>Input Format</h2>
+                    <p>Use the table to add processes with the following parameters:</p>
+                    <ul>
+                        <li><strong>ID:</strong> Process identifier (P1, P2, etc.)</li>
+                        <li><strong>Arrival Time:</strong> When process enters ready queue</li>
+                        <li><strong>Burst Time:</strong> How long process needs CPU</li>
+                        <li><strong>Priority:</strong> Used only in Priority Scheduling (lower = higher priority)</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h2>Algorithms Explained</h2>
+                    
+                    <h3>FCFS - First Come First Serve</h3>
+                    <p>Non-preemptive algorithm where processes execute in order of arrival. Simple but can cause convoy effect.</p>
+                    <p><strong>Best for:</strong> Batch systems, simple scheduling</p>
+
+                    <h3>SJF - Shortest Job First</h3>
+                    <p>Non-preemptive algorithm that selects the process with smallest burst time. Minimizes average waiting time.</p>
+                    <p><strong>Best for:</strong> Minimizing average wait time</p>
+
+                    <h3>Priority Scheduling</h3>
+                    <p>Non-preemptive algorithm where processes are assigned priorities. Lower number = higher priority.</p>
+                    <p><strong>Best for:</strong> Real-time systems, OS kernel processes</p>
+
+                    <h3>Round Robin</h3>
+                    <p>Preemptive algorithm where each process gets a fixed time quantum. Fair to all processes.</p>
+                    <p><strong>Best for:</strong> Time-sharing systems, responsive systems</p>
+                </div>
+
+                <div class="doc-section">
+                    <h2>Formulas</h2>
+                    <ul>
+                        <li><strong>Completion Time (CT):</strong> Time when process finishes</li>
+                        <li><strong>Turnaround Time (TAT):</strong> CT - Arrival Time</li>
+                        <li><strong>Waiting Time (WT):</strong> TAT - Burst Time</li>
+                        <li><strong>CPU Utilization:</strong> (Total Busy Time / Total Time) × 100%</li>
+                    </ul>
+                </div>
+
+                <div class="doc-section">
+                    <h2>Sample Data</h2>
+                    <p><strong>Preset 1:</strong> P1(0,5), P2(1,3), P3(2,8)</p>
+                    <p><strong>Preset 2:</strong> P1(0,8), P2(1,4), P3(2,2), P4(3,1)</p>
+                    <p><strong>Preset 3:</strong> P1(0,10), P2(0,5), P3(0,8)</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 CPU Scheduling Simulator - Educational Tool</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
