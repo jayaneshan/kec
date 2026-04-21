@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banker's Algorithm Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Banker's Algorithm Simulator</h1>
+            <p>Deadlock Avoidance Resource Allocation</p>
+        </header>
+
+        <main>
+            <!-- Error Messages -->
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="config-inputs">
+                    <div class="input-group">
+                        <label for="processes">Number of Processes:</label>
+                        <input type="number" id="processes" min="1" max="10" value="3">
+                    </div>
+                    <div class="input-group">
+                        <label for="resources">Number of Resources:</label>
+                        <input type="number" id="resources" min="1" max="10" value="3">
+                    </div>
+                    <button id="generateBtn" class="btn-primary">Generate Matrices</button>
+                    <button id="sampleBtn" class="btn-sample">Load Sample Data</button>
+                </div>
+            </section>
+
+            <!-- Matrix Input Section -->
+            <section id="matrixSection" class="matrix-section" style="display: none;">
+                <!-- Allocation Matrix -->
+                <div class="matrix-container">
+                    <h3>Allocation Matrix (A)</h3>
+                    <p class="matrix-description">Current resource allocation</p>
+                    <div id="allocationMatrix" class="matrix-input"></div>
+                </div>
+
+                <!-- Maximum Matrix -->
+                <div class="matrix-container">
+                    <h3>Maximum Matrix (M)</h3>
+                    <p class="matrix-description">Maximum resources needed</p>
+                    <div id="maximumMatrix" class="matrix-input"></div>
+                </div>
+
+                <!-- Available Matrix -->
+                <div class="matrix-container">
+                    <h3>Available Matrix (V)</h3>
+                    <p class="matrix-description">Available resources</p>
+                    <div id="availableMatrix" class="matrix-input"></div>
+                </div>
+
+                <button id="simulateBtn" class="btn-primary">Run Simulation</button>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <div class="result-grid">
+                    <!-- Need Matrix -->
+                    <div class="result-container">
+                        <h3>Need Matrix (N = M - A)</h3>
+                        <div id="needMatrix" class="matrix-display"></div>
+                    </div>
+
+                    <!-- Safety Status -->
+                    <div class="result-container">
+                        <h3>System State</h3>
+                        <div id="safetyStatus" class="safety-status"></div>
+                    </div>
+
+                    <!-- Safe Sequence -->
+                    <div class="result-container">
+                        <h3>Safe Sequence</h3>
+                        <div id="safeSequence" class="safe-sequence"></div>
+                    </div>
+
+                    <!-- Execution Trace -->
+                    <div class="result-container full-width">
+                        <h3>Execution Trace</h3>
+                        <div id="executionTrace" class="execution-trace"></div>
+                    </div>
+                </div>
+
+                <button id="resetBtn" class="btn-secondary">Reset</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>Operating Systems - Deadlock Avoidance Algorithm</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
