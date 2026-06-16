@@ -10,7 +10,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*", // later we will lock it to Vercel URL
+    origin: "https://bropongal.vercel.app/", // later we will lock it to Vercel URL
   })
 );app.use(express.json());
 
